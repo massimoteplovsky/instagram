@@ -1,0 +1,10 @@
+{
+  "prettier": {
+    "printWidth": 80,
+    "tabWidth": 2,
+    "bracketSpacing": false,
+    "trailingComma": "es5",
+    "singleQuote": true,
+    "doubleQoute": false
+  }
+}
