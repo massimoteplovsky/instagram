@@ -5,18 +5,13 @@ env:
   jest: true
 
 rules:
-  no-console: 'error'
+  no-console: 'warn'
   semi: 'error'
   no-undef: 'warn'
 
-extends:
-  [
-    'eslint:recommended',
-    'plugin:react/recommended',
-    'plugin:jsx-a11y/recommended',
-  ]
+extends: ['eslint:recommended', 'plugin:react/recommended']
 
-parser: 'babel-eslint'
+# parser: '@babel/eslint-parser'
 
 parserOptions:
   ecmaFeatures:
