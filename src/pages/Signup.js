@@ -3,32 +3,56 @@ import { useHistory, Link } from 'react-router-dom';
 import FirebaseContext from '../context/firebase';
 import useTitle from '../hooks/useTitle';
 import { Path } from '../constants/paths';
+import { doesUserExist } from '../services/firebase';
 
-const Login = () => {
-  useTitle('Login - instagram');
+const Signup = () => {
+  useTitle('Sign Up - instagram');
   const history = useHistory();
   const { firebase } = useContext(FirebaseContext);
 
   const [formdata, setFormdata] = useState({
+    username: '',
+    fullname: '',
     email: '',
     password: '',
   });
   const [formError, setFormError] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const { email, password } = formdata;
+  const { username, fullname, email, password } = formdata;
   const isInvalid = email === '' || password === '';
 
-  const handleLogin = async (e) => {
+  const handleSignup = async (e) => {
     e.preventDefault();
 
     setLoading(true);
 
-    try {
-      await firebase.auth().signInWithEmailAndPassword(email, password);
-      history.push(Path.DASHBOARD);
-    } catch (error) {
-      setFormError(error.message);
+    const usernameExist = await doesUserExist(username);
+
+    if (!usernameExist) {
+      try {
+        const createdUser = await firebase
+          .auth()
+          .createUserWithEmailAndPassword(email, password);
+
+        await createdUser.user.updateProfile({ displayName: username });
+
+        await firebase.firestore().collection('users').add({
+          userId: createdUser.user.uid,
+          username: username.toLocaleLowerCase(),
+          fullname,
+          emailAddress: email.toLocaleLowerCase(),
+          following: [],
+          followers: [],
+          dateCreated: Date.now(),
+        });
+
+        history.push(Path.LOGIN);
+      } catch (error) {
+        setFormError(error.message);
+      }
+    } else {
+      setFormError('Username is taken');
     }
 
     setLoading(false);
@@ -63,7 +87,25 @@ const Login = () => {
             </p>
           )}
 
-          <form onSubmit={handleLogin} method="POST">
+          <form onSubmit={handleSignup} method="POST">
+            <input
+              aria-label="Enter your username"
+              type="text"
+              placeholder="Username"
+              className="text-sm text-gray-base w-full mr-3 py-5 px-4 h-2 border border-gray-primary rounded mb-2"
+              name="username"
+              onChange={handleInputChange}
+              value={username}
+            />
+            <input
+              aria-label="Enter your fullname"
+              type="text"
+              placeholder="Fullname"
+              className="text-sm text-gray-base w-full mr-3 py-5 px-4 h-2 border border-gray-primary rounded mb-2"
+              name="fullname"
+              onChange={handleInputChange}
+              value={fullname}
+            />
             <input
               aria-label="Enter your email address"
               type="text"
@@ -83,20 +125,20 @@ const Login = () => {
               value={password}
             />
             <button
-              disabled={isInvalid}
+              disabled={isInvalid || loading}
               type="submit"
               className={`bg-blue-medium text-white w-full rounded h-8 font-bold
                ${(isInvalid || loading) && 'opacity-50'}`}
             >
-              {loading ? 'Loading...' : 'Login'}
+              {loading ? 'Loading...' : 'Sign up'}
             </button>
           </form>
         </div>
         <div className="flex justify-center items-center flex-col w-full bg-white p-4 rounded border border-gray-primary">
           <p className="text-sm">
-            ${`Don't`} have an account?{` `}
-            <Link to={Path.SIGNUP} className="font-bold text-blue-medium">
-              Sign up
+            Do you have an account?{` `}
+            <Link to={Path.LOGIN} className="font-bold text-blue-medium">
+              Login
             </Link>
           </p>
         </div>
@@ -105,4 +147,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Signup;
