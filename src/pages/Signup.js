@@ -47,15 +47,16 @@ const Signup = () => {
           dateCreated: Date.now(),
         });
 
+        setLoading(false);
         history.push(Path.LOGIN);
       } catch (error) {
+        setLoading(false);
         setFormError(error.message);
       }
     } else {
+      setLoading(false);
       setFormError('Username is taken');
     }
-
-    setLoading(false);
   };
 
   const handleInputChange = (event) => {

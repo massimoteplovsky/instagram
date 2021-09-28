@@ -26,12 +26,12 @@ const Login = () => {
 
     try {
       await firebase.auth().signInWithEmailAndPassword(email, password);
+      setLoading(false);
       history.push(Path.DASHBOARD);
     } catch (error) {
+      setLoading(false);
       setFormError(error.message);
     }
-
-    setLoading(false);
   };
 
   const handleInputChange = (event) => {
