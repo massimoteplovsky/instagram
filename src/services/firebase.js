@@ -85,9 +85,25 @@ export const getFollowingUserPhotos = async (userId, following) => {
     photos.map(async (photo) => {
       let userLikedPhoto = false;
 
-      if (photo.likes.includes(userId)) {
-        userLikedPhoto = true;
+      if (photo.likes.length) {
+        if (photo.likes.includes(userId)) {
+          userLikedPhoto = true;
+        }
+
+        photo.likes = await Promise.all(
+          photo.likes.map(async (userId) => {
+            const [user] = await getUserByUserId(userId);
+            return user;
+          })
+        );
       }
+
+      if (photo.comments.length) {
+        photo.comments = photo.comments.sort(
+          (a, b) => b.createdDate - a.createdDate
+        );
+      }
+
       const [user] = await getUserByUserId(photo.userId);
       const { username } = user;
 
@@ -96,4 +112,26 @@ export const getFollowingUserPhotos = async (userId, following) => {
   );
 
   return photosWithUserDetails;
+};
+
+export const toggleLikedPhoto = async (docId, userId, toggleLiked) => {
+  await firebase
+    .firestore()
+    .collection('photos')
+    .doc(docId)
+    .update({
+      likes: toggleLiked
+        ? FieldValue.arrayRemove(userId)
+        : FieldValue.arrayUnion(userId),
+    });
+};
+
+export const updatePostComments = async (docId, commentData) => {
+  await firebase
+    .firestore()
+    .collection('photos')
+    .doc(docId)
+    .update({
+      comments: FieldValue.arrayUnion(commentData),
+    });
 };
