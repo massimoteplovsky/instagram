@@ -6,12 +6,14 @@ import {
   useHistory,
   Redirect,
 } from 'react-router-dom';
-import Skeleton from 'react-loading-skeleton';
 import { Path } from './constants/paths';
 import { UserContext } from './context';
 import useAuth from './hooks/useAuth';
 
 // Components
+import Loading from './components/Loading';
+
+// Pages
 import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
@@ -22,13 +24,7 @@ const WithAuth = (Component) => {
     const history = useHistory();
     const { user, loading } = useAuth();
 
-    if (loading) {
-      return (
-        <div className="flex justify-center items-center w-2/3 mx-auto h-screen">
-          <p>Loading...</p>
-        </div>
-      );
-    }
+    if (loading) return <Loading />;
 
     if (user && [Path.LOGIN, Path.SIGNUP].includes(history.location.pathname)) {
       return <Redirect to={Path.DASHBOARD} />;

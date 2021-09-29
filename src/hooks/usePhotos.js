@@ -1,5 +1,4 @@
-import { useState, useEffect, useContext } from 'react';
-import { UserContext } from '../context';
+import { useState, useEffect } from 'react';
 import { getFollowingUserPhotos } from '../services/firebase';
 
 const usePhotos = (userId, following) => {
