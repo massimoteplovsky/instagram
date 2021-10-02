@@ -6,30 +6,26 @@ import Skeleton from 'react-loading-skeleton';
 //Components
 import SuggestedProfile from './SuggestedProfile';
 
-const Suggestion = ({ userId, following, loggedInUserDocId }) => {
+const Suggestion = ({
+  userId: loggedInUserId,
+  following,
+  loggedInUserDocId,
+}) => {
   const [profiles, setProfiles] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await getSuggestedProfiles(userId, following);
+      const response = await getSuggestedProfiles(loggedInUserId, following);
       setProfiles(response);
     };
     fetchData();
-  }, [userId]);
+  }, [following.length]);
 
   if (!profiles) {
     return <Skeleton count={1} height={150} className="mt-5" />;
   }
 
   if (!profiles.length) return null;
-
-  const handleChangeProfiles = (profileId) => {
-    const newProfiles = profiles.filter(
-      (profile) => profile.userId !== profileId
-    );
-
-    setProfiles(newProfiles);
-  };
 
   return (
     <div className="rounded flex flex-col">
@@ -43,9 +39,8 @@ const Suggestion = ({ userId, following, loggedInUserDocId }) => {
             profileDocId={docId}
             username={username}
             profileId={userId}
-            userId={userId}
+            userId={loggedInUserId}
             loggedInUserDocId={loggedInUserDocId}
-            handleChangeProfiles={handleChangeProfiles}
           />
         ))}
       </div>

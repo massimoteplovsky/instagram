@@ -27,6 +27,26 @@ export const getUserByUserId = async (userId) => {
   return getData(result);
 };
 
+export const getUserByUsername = async (username) => {
+  const result = await firebase
+    .firestore()
+    .collection('users')
+    .where('username', '==', username.toLowerCase())
+    .get();
+
+  return getData(result);
+};
+
+export const getUserPhotosByUserId = async (userId) => {
+  const result = await firebase
+    .firestore()
+    .collection('photos')
+    .where('userId', '==', userId)
+    .get();
+
+  return getData(result);
+};
+
 export const getSuggestedProfiles = async (userId, following) => {
   let query = firebase.firestore().collection('users');
 

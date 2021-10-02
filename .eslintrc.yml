@@ -5,9 +5,10 @@ env:
   jest: true
 
 rules:
-  no-console: 'warn'
-  semi: 'error'
-  no-undef: 'warn'
+  no-console: warn
+  semi: error
+  no-undef: warn
+  no-unescaped-entities: off
 
 extends: ['eslint:recommended', 'plugin:react/recommended']
 

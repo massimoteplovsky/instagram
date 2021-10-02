@@ -1,13 +1,13 @@
 import React, { useContext } from 'react';
 import Skeleton from 'react-loading-skeleton';
-import { UserContext } from '../context';
+import { LoggedInUserContext } from '../context';
 import usePhotos from '../hooks/usePhotos';
 
 // Components
 import Post from './Post';
 
 const Timeline = () => {
-  const { user } = useContext(UserContext);
+  const { user } = useContext(LoggedInUserContext);
   const { userId, following } = user;
 
   const { photos, loading } = usePhotos(userId, following);
@@ -19,8 +19,6 @@ const Timeline = () => {
       </div>
     );
   }
-
-  console.log(photos);
 
   return (
     <div className="container col-span-2">
