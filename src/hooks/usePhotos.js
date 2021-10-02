@@ -12,11 +12,14 @@ const usePhotos = (userId, following) => {
         photos.sort((a, b) => b.dateCreated - a.dateCreated);
         setPhotos(photos);
         setLoading(false);
+        return;
       }
+
+      setLoading(false);
     };
 
     fetchData();
-  }, []);
+  }, [following.length]);
 
   return { loading, photos };
 };

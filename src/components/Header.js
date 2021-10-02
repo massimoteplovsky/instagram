@@ -1,16 +1,14 @@
 import React, { useContext } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { UserContext, FirebaseContext } from '../context';
-import { Path, DEFAULT_IMAGE_PATH } from '../constants/paths';
+import { Path, DEFAULT_IMAGE_PATH } from '../constants';
 
 const Header = () => {
   const { firebase } = useContext(FirebaseContext);
   const { user } = useContext(UserContext);
-  const history = useHistory();
 
   const handleSignOut = () => {
-    firebase.auth().signOut();
-    history.push(Path.LOGIN);
+    return firebase.auth().signOut();
   };
 
   return (

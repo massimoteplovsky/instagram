@@ -2,7 +2,7 @@ import React, { useState, useContext } from 'react';
 import { useHistory, Link } from 'react-router-dom';
 import FirebaseContext from '../context/firebase';
 import useTitle from '../hooks/useTitle';
-import { Path } from '../constants/paths';
+import { Path } from '../constants';
 
 const Login = () => {
   useTitle('Login - instagram');

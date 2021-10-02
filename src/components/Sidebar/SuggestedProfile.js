@@ -4,7 +4,9 @@ import { Link } from 'react-router-dom';
 import {
   updateLoggedInUserFollowing,
   updateFollowedUserFollowers,
+  getUserByUserId,
 } from '../../services/firebase';
+import { LoggedInUserContext } from '../../context';
 
 const SuggestedProfile = ({
   profileDocId,
@@ -12,9 +14,9 @@ const SuggestedProfile = ({
   loggedInUserDocId,
   userId,
   username,
-  handleChangeProfiles,
 }) => {
   const [followed, setFollowed] = useState(false);
+  const { setActiveUser } = useContext(LoggedInUserContext);
 
   if (followed) return null;
 
@@ -22,7 +24,8 @@ const SuggestedProfile = ({
     setFollowed(true);
     await updateLoggedInUserFollowing(loggedInUserDocId, profileId);
     await updateFollowedUserFollowers(profileDocId, userId);
-    handleChangeProfiles(profileId);
+    const [user] = await getUserByUserId(userId);
+    setActiveUser(user);
   };
 
   return (
@@ -57,7 +60,6 @@ SuggestedProfile.propTypes = {
   profileId: pt.string.isRequired,
   userId: pt.string.isRequired,
   loggedInUserDocId: pt.string.isRequired,
-  handleChangeProfiles: pt.func.isRequired,
 };
 
 export default SuggestedProfile;
